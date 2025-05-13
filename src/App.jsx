@@ -10,6 +10,7 @@ const App = () => {
     const [groups, setGroups] = useState(['Друзья', 'Коллеги']);
     const [showContactSidebar, setShowContactSidebar] = useState(false);
     const [showGroupSidebar, setShowGroupSidebar] = useState(false);
+    const [editingContact, setEditingContact] = useState(null);
 
     useEffect(() => {
         const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
@@ -26,7 +27,14 @@ const App = () => {
         localStorage.setItem('groups', JSON.stringify(groups));
     }, [groups]);
 
-    const addContact = (contact) => setContacts([...contacts, contact]);
+    const saveContact = (contact) => {
+        if (editingContact) {
+            setContacts(contacts.map(c => c === editingContact ? contact : c));
+            setEditingContact(null);
+        } else {
+            setContacts([...contacts, contact]);
+        }
+    };
 
     const addGroup = (groupName) => {
         if (!groups.includes(groupName)) setGroups([...groups, groupName]);
@@ -44,21 +52,37 @@ const App = () => {
                 <button className="btn btn-primary" onClick={() => setShowGroupSidebar(true)}>
                     Группы
                 </button>
-                <button className="btn btn-danger" onClick={() => setShowContactSidebar(true)}>
+                <button className="btn btn-danger" onClick={() => {
+                    setEditingContact(null);
+                    setShowContactSidebar(true);
+                }}>
                     Добавить контакт
                 </button>
             </div>
 
-            <GroupedContactList contacts={contacts} groups={groups} />
+            <GroupedContactList
+                contacts={contacts}
+                groups={groups}
+                onEdit={(contact) => {
+                    setEditingContact(contact);
+                    setShowContactSidebar(true);
+                }}
+            />
 
             {showContactSidebar && (
                 <>
                     <div className="sidebar show">
-                        <h5 className="mb-3">Добавить контакт</h5>
+                        <h5 className="mb-3">
+                            {editingContact ? 'Редактировать контакт' : 'Добавить контакт'}
+                        </h5>
                         <ContactForm
                             groups={groups}
-                            addContact={addContact}
-                            closeForm={() => setShowContactSidebar(false)}
+                            addContact={saveContact}
+                            closeForm={() => {
+                                setShowContactSidebar(false);
+                                setEditingContact(null);
+                            }}
+                            initialData={editingContact}
                         />
                     </div>
                     <div className="sidebar-overlay" onClick={() => setShowContactSidebar(false)} />

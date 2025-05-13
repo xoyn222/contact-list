@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const GroupedContactList = ({ contacts, groups }) => {
+const GroupedContactList = ({ contacts, groups, onEdit }) => {
     const [expandedGroup, setExpandedGroup] = useState(null);
 
     const toggleGroup = (groupName) => {
@@ -13,6 +13,17 @@ const GroupedContactList = ({ contacts, groups }) => {
     }, {});
 
     const noGroupContacts = contacts.filter((c) => !c.group);
+
+    const renderContact = (contact, idx) => (
+        <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{contact.name}</strong> — {contact.phone}
+            </div>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => onEdit(contact)}>
+                ✏️ Редактировать
+            </button>
+        </li>
+    );
 
     return (
         <div className="accordion" id="groupedContacts">
@@ -31,11 +42,7 @@ const GroupedContactList = ({ contacts, groups }) => {
                         <div className="accordion-body">
                             {groupedContacts[group].length > 0 ? (
                                 <ul className="list-group">
-                                    {groupedContacts[group].map((contact, idx) => (
-                                        <li key={idx} className="list-group-item">
-                                            <strong>{contact.name}</strong> — {contact.phone}
-                                        </li>
-                                    ))}
+                                    {groupedContacts[group].map(renderContact)}
                                 </ul>
                             ) : (
                                 <p className="text-muted">Нет контактов</p>
@@ -59,11 +66,7 @@ const GroupedContactList = ({ contacts, groups }) => {
                     <div className={`accordion-collapse collapse ${expandedGroup === 'no-group' ? 'show' : ''}`}>
                         <div className="accordion-body">
                             <ul className="list-group">
-                                {noGroupContacts.map((contact, idx) => (
-                                    <li key={idx} className="list-group-item">
-                                        <strong>{contact.name}</strong> — {contact.phone}
-                                    </li>
-                                ))}
+                                {noGroupContacts.map(renderContact)}
                             </ul>
                         </div>
                     </div>

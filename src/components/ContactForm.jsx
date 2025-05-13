@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ContactForm = ({ groups, addContact, closeForm }) => {
+const ContactForm = ({ groups, addContact, closeForm, initialData }) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [group, setGroup] = useState('');
+
+    useEffect(() => {
+        if (initialData) {
+            setName(initialData.name);
+            setPhone(initialData.phone);
+            setGroup(initialData.group || '');
+        }
+    }, [initialData]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
