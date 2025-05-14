@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaTrash } from 'react-icons/fa'; // Импорт иконки
 
 const GroupPanel = ({ groups, addGroup, deleteGroup }) => {
     const [newGroup, setNewGroup] = useState('');
@@ -16,10 +17,11 @@ const GroupPanel = ({ groups, addGroup, deleteGroup }) => {
                 <div key={i} className="d-flex align-items-center mb-2">
                     <input className="form-control me-2" value={group} readOnly />
                     <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
                         onClick={() => deleteGroup(group)}
+                        style={{ width: '36px', height: '36px' }}
                     >
-                        🗑️
+                        <FaTrash />
                     </button>
                 </div>
             ))}
